@@ -13,7 +13,7 @@ module.exports = {
     ecmaVersion: 2018,
     sourceType: 'module',
   },
-  plugins: ['@typescript-eslint', 'prettier'],
+  plugins: ['@typescript-eslint', 'prettier', 'svelte3'],
   rules: {
     semi: 'off',
     'import/prefer-default-export': 'off',
@@ -22,15 +22,23 @@ module.exports = {
     'import/no-unresolved': 'off',
     'prettier/prettier': 'error',
     'prefer-spread': 'off',
+    'import/no-extraneous-dependencies': 'off',
+  },
+  'settings': {
+    'import/core-modules': ['svelte'],
   },
   overrides: [
     {
       extends: ['plugin:cypress/recommended'],
-      files: ['cypress/**/*'],
+      files: ['cypress/**/*', '*.svelte'],
       env: {
         'cypress/globals': true,
       },
       plugins: ['cypress'],
     },
+    // {
+    //   files: ['*.svelte'],
+    //   processor: 'svelte3/svelte3',
+    // }
   ],
 }

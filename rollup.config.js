@@ -11,11 +11,19 @@ import typescript from '@rollup/plugin-typescript'
 import config from 'sapper/config/rollup.js'
 import postcss from 'rollup-plugin-postcss'
 import json from '@rollup/plugin-json'
+import alias from '@rollup/plugin-alias'
 import pkg from './package.json'
 
 const mode = process.env.NODE_ENV
 const dev = mode === 'development'
 const legacy = !!process.env.SAPPER_LEGACY_BUILD
+
+const pluginAlias = () => alias({
+  resolve: ['.js', 'ts', 'svelte'],
+  entries: [
+    { find: '@', replacement: path.resolve(__dirname, 'src') },
+  ]
+})
 
 const onwarn = (warning, onwarn) =>
   (warning.code === 'MISSING_EXPORT' && /'preload'/.test(warning.message)) ||
@@ -49,6 +57,7 @@ export default {
       }),
       commonjs(),
       typescript({ sourceMap: dev }),
+      pluginAlias(),
 
       legacy &&
         babel({
@@ -108,6 +117,7 @@ export default {
       }),
       commonjs(),
       typescript({ sourceMap: dev }),
+      pluginAlias(),
     ],
     external: Object.keys(pkg.dependencies).concat(
       require('module').builtinModules

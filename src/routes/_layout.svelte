@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte'
-	import Nav from '../components/Nav.svelte'
+	import Nav from '@/components/Nav.svelte'
   import 'bulma/css/bulma.css'
 
 	export let segment: string;
