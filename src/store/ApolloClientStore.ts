@@ -1,26 +1,53 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { writable } from 'svelte/store'
-import { ApolloCache, ApolloClient } from '@apollo/client'
+import { ApolloCache, ApolloClient, ApolloLink } from '@apollo/client'
 import { InMemoryCache } from 'apollo-cache-inmemory'
 import { Observable, of } from 'rxjs'
 import { map } from 'rxjs/operators'
+import { WebSocketLink } from 'apollo-link-ws'
+import { split } from 'apollo-link'
+import { HttpLink } from 'apollo-link-http'
+import { getMainDefinition } from '@apollo/client/utilities'
 
 const createApolloClient = () => {
-  let client: ApolloClient<any>
+  let client: ApolloClient<any> | undefined
   const { set } = writable<ApolloClient<any>>(null)
-  const get = (): Observable<ApolloClient<any>> => {
-    return of(client).pipe(
-      map((c) => {
-        if (c) {
-          return c
-        }
-        client = new ApolloClient({
-          cache: (new InMemoryCache() as unknown) as ApolloCache<any>,
-          uri: 'http://localhost:7711/graphql',
-        })
-        return client
-      })
-    )
+  const get = (): ApolloClient<any> => {
+    if (client) {
+      return client
+    }
+
+    const wsLink = new WebSocketLink({
+      uri: 'APP_WS_URL',
+      options: {
+        reconnect: true,
+        lazy: true,
+        connectionParams: () => {
+          return { headers: {} }
+        },
+      },
+    })
+
+    const httpLink = new HttpLink({
+      uri: 'APP_HTTP_URL',
+      headers: {},
+    })
+
+    const link: ApolloLink = (split(
+      ({ query }) => {
+        // @ts-ignore
+        const { kind, operation } = getMainDefinition(query)
+        return kind === 'OperationDefinition' && operation === 'subscription'
+      },
+      wsLink,
+      httpLink
+    ) as unknown) as ApolloLink
+
+    client = new ApolloClient({
+      cache: (new InMemoryCache() as unknown) as ApolloCache<any>,
+      link,
+    })
+    return client
   }
 
   return {

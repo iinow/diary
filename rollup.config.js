@@ -18,12 +18,13 @@ const mode = process.env.NODE_ENV
 const dev = mode === 'development'
 const legacy = !!process.env.SAPPER_LEGACY_BUILD
 
-const pluginAlias = () => alias({
-  resolve: ['.js', 'ts', 'svelte'],
-  entries: [
-    { find: '@', replacement: path.resolve(__dirname, 'src') },
-  ]
-})
+const pluginAlias = () =>
+  alias({
+    entries: [{ find: '@', replacement: path.resolve(__dirname, 'src') }],
+    customResolver: resolve({
+      extensions: ['.js', '.ts', '.svelte'],
+    }),
+  })
 
 const onwarn = (warning, onwarn) =>
   (warning.code === 'MISSING_EXPORT' && /'preload'/.test(warning.message)) ||
@@ -40,6 +41,8 @@ export default {
       replace({
         'process.browser': true,
         'process.env.NODE_ENV': JSON.stringify(mode),
+        APP_HTTP_URL: 'http://localhost:7711/graphql',
+        APP_WS_URL: 'ws://localhost:7711/sub',
       }),
       svelte({
         dev,

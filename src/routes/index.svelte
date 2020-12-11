@@ -5,6 +5,7 @@
   import { gql } from 'apollo-boost'
   import { client as ApolloClient } from '../store/ApolloClientStore'
   import { flatMap } from 'rxjs/internal/operators'
+  import { of } from 'rxjs'
 
   let response
   let datas = []
@@ -19,7 +20,7 @@
   }
   `
   if(process.browser) {
-    ApolloClient.get()
+    of(ApolloClient.get())
       .pipe(
         flatMap(client => client.query({query: queryMessages}))
       )

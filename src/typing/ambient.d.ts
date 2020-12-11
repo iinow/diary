@@ -18,6 +18,8 @@ declare module '*.jpg' {
   export = value
 }
 
+declare module '*.svelte' {}
+
 declare module '*.jpeg' {
   const value: string
   export = value
