@@ -1,87 +1,41 @@
+<style>
+</style>
+
+<svelte:head>
+  <title>Diary</title>
+</svelte:head>
+
+<Input bind:value="{notificationMessage}" />
+<Button on:click="{(e) => showNotification(e, notificationMessage)}">
+  하이.
+</Button>
+<a href="/oauth/kakao">카카오 로그인</a>
+
 <script lang="ts">
-	import successkid from 'images/successkid.jpg'
-	import Button from 'svelma/src/components/Button.svelte'
-  import Noti from 'svelma/src/components/Notification'
+  // import successkid from 'images/successkid.jpg'
+  import Button from 'svelma/src/components/Button.svelte'
+  import Input from 'svelma/src/components/Input.svelte'
   import { gql } from 'apollo-boost'
   import { client as ApolloClient } from '../store/ApolloClientStore'
   import { flatMap } from 'rxjs/internal/operators'
   import { of } from 'rxjs'
+  import { showNotification } from '@/service/Notification'
 
-  let response
+  let notificationMessage = ''
   let datas = []
 
   const queryMessages = gql`
-  {
-    messages {
-      text,
-      updatedAt,
-      createAt
+    {
+      messages {
+        text
+        updatedAt
+        createAt
+      }
     }
-  }
   `
-  if(process.browser) {
+  if (process.browser) {
     of(ApolloClient.get())
-      .pipe(
-        flatMap(client => client.query({query: queryMessages}))
-      )
-      .subscribe(value => {
-        console.log(value.data)
-        datas = value.data.messages
-      })
-  }
-
-  function showNoti() {
-    Noti.create({
-      message: "dkfdjkfjdfk"
-    })
+      .pipe(flatMap((client) => client.query({ query: queryMessages })))
+      .subscribe((value) => (datas = value.data.messages))
   }
 </script>
-
-<style>
-	h1, figure, p {
-		text-align: center;
-		margin: 0 auto;
-	}
-
-	h1 {
-		font-size: 2.8em;
-		text-transform: uppercase;
-		font-weight: 700;
-		margin: 0 0 0.5em 0;
-	}
-
-	figure {
-		margin: 0 0 1em 0;
-	}
-
-	img {
-		width: 100%;
-		max-width: 400px;
-		margin: 0 0 1em 0;
-	}
-
-	p {
-		margin: 1em auto;
-	}
-
-	@media (min-width: 480px) {
-		h1 {
-			font-size: 4em;
-		}
-	}
-</style>
-
-<svelte:head>
-	<title>Sapper project template</title>
-</svelte:head>
-
-{JSON.stringify(datas)}
-<h1>Great success!</h1>
-<Button on:click={showNoti}>하이.</Button>
-{JSON.stringify(response)}
-<figure>
-	<img alt="Success Kid" src="{successkid}">
-	<figcaption>Have fun with Sapper!</figcaption>
-</figure>
-
-<p><strong>Try editing this file (src/routes/index.svelte) to test live reloading.</strong></p>

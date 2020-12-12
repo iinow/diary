@@ -41,7 +41,7 @@ export default {
       replace({
         'process.browser': true,
         'process.env.NODE_ENV': JSON.stringify(mode),
-        APP_HTTP_URL: 'http://localhost:7711/graphql',
+        APP_HTTP_URL: '/graphql',
         APP_WS_URL: 'ws://localhost:7711/sub',
       }),
       svelte({
