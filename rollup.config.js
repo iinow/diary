@@ -61,7 +61,7 @@ export default {
       commonjs(),
       typescript({ sourceMap: dev }),
       pluginAlias(),
-
+      json(),
       legacy &&
         babel({
           extensions: ['.js', '.mjs', '.html', '.svelte'],

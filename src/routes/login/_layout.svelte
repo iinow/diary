@@ -40,6 +40,13 @@
     opacity: 1;
   }
 
+  main {
+    display: flex;
+    height: 100vh;
+    justify-content: center;
+    align-items: center;
+  }
+
   @keyframes wave {
     0% {
       margin-left: 0;
@@ -65,6 +72,5 @@
   <div class="wave"></div>
 </div>
 <main>
-  로그인 레이아웃
   <slot />
 </main>
