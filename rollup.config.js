@@ -10,6 +10,8 @@ import sveltePreprocess from 'svelte-preprocess'
 import typescript from '@rollup/plugin-typescript'
 import config from 'sapper/config/rollup.js'
 import postcss from 'rollup-plugin-postcss'
+import svg from 'rollup-plugin-svg-import'
+// import svelteSVG from "rollup-plugin-svelte-svg";
 import json from '@rollup/plugin-json'
 import alias from '@rollup/plugin-alias'
 import pkg from './package.json'
@@ -50,6 +52,7 @@ export default {
         preprocess: sveltePreprocess(),
         emitCss: true,
       }),
+      svg({ stringify: false }),
       url({
         sourceDir: path.resolve(__dirname, 'src/node_modules/images'),
         publicPath: '/client/',
@@ -110,6 +113,7 @@ export default {
         preprocess: sveltePreprocess(),
         dev,
       }),
+      svg({ stringify: false }),
       url({
         sourceDir: path.resolve(__dirname, 'src/node_modules/images'),
         publicPath: '/client/',

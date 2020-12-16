@@ -2,21 +2,31 @@
 </style>
 
 <svelte:head>
-  <title>Diary Login</title>
+  <title>MD | Login</title>
 </svelte:head>
-<section>
-  <Button>GitHub</Button>
-  <Button tag="a" href="/oauth/kakao">Kakao</Button>
-  <!-- {#each logoList as logo}
-    <Button>
-      <img class="icon is-large" src="{logo.url}" alt="{logo.alt}" />
-    </Button>
-  {/each} -->
+<section class="section">
+  <div class="container">
+    <div
+      class="is-flex is-justify-content-center is-align-content-center is-align-items-center is-fullheight"
+    >
+      <div class="card">
+        <div class="card-content">
+          <div class="content">
+            <Button>GitHub</Button>
+            <Button tag="a" href="/oauth/kakao">Kakao</Button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </section>
 
 <script lang="ts">
+  import { interval } from 'rxjs'
   import Button from 'svelma/src/components/Button.svelte'
   import Icon from 'svelma/src/components/Icon.svelte'
+  import { onMount } from 'svelte'
+
   type LogoImg = {
     url: string
     alt: string

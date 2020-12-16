@@ -2,8 +2,6 @@
 import { writable } from 'svelte/store'
 import { ApolloCache, ApolloClient, ApolloLink } from '@apollo/client'
 import { InMemoryCache } from 'apollo-cache-inmemory'
-import { Observable, of } from 'rxjs'
-import { map } from 'rxjs/operators'
 import { WebSocketLink } from 'apollo-link-ws'
 import { split } from 'apollo-link'
 import { HttpLink } from 'apollo-link-http'
