@@ -38,5 +38,5 @@ module.exports = {
     //   processor: 'svelte3/svelte3',
     // }
   ],
-  ignorePatterns: ['*.svelte', 'node_modules/*'],
+  ignorePatterns: ['*.svelte', 'node_modules/*', 'src/generated/*'],
 }

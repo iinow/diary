@@ -55,3 +55,5 @@ const createApolloClient = () => {
 }
 
 export const client = createApolloClient()
+
+export default client

@@ -14,41 +14,38 @@
   import { onMount } from 'svelte'
   import { v4 as uuidV4 } from 'uuid'
   import { client } from '@/store/ApolloClientStore'
-  import { getDiary } from '@/service/GraphqlApi'
+  import { yyyyMMdd } from '@/common/util'
+  import { GetDiary } from '@/generated/graphql'
 
   let editor: Editor
   let html: string = ''
   let preHtml: string = ''
   const uuid = uuidV4()
-  let diary: any
+  let diary
 
   onMount(() => {
-    getDiary(1)
-      .pipe(
-        tap((data) => {
-          diary = data.data.diary
-          preHtml = diary.content
-          html = diary.content
-        }),
-        switchMap(() =>
-          interval(1000).pipe(
-            filter(() => html !== preHtml),
-            tap(() => (preHtml = html)),
-            map(() => client.get()),
-            flatMap((apollo) =>
-              apollo.mutate({ mutation: publishMessageQuery(uuid, html) })
-            )
-          )
-        )
-      )
-      .subscribe(console.log)
+    GetDiary({ variables: { id: 3 } }).subscribe((dd) => {
+      diary = dd.data
+      console.log(diary)
+    })
+    // getDiaryByToday(yyyyMMdd())
+    //   .pipe(
+    //     tap((data) => {
+    //       diary = data.data.diary
+    //       preHtml = diary.content
+    //       html = diary.content
+    //     }),
+    //     switchMap(() =>
+    //       interval(1000).pipe(
+    //         filter(() => html !== preHtml),
+    //         tap(() => (preHtml = html)),
+    //         map(() => client.get()),
+    //         flatMap((apollo) =>
+    //           apollo.mutate({ mutation: publishMessageQuery(uuid, html) })
+    //         )
+    //       )
+    //     )
+    //   )
+    //   .subscribe(console.log)
   })
-
-  const publishMessageQuery = (topic: string, message: string) => {
-    return gql`
-      mutation {
-        publishMessage(topic: "${topic}", message: "${message}")
-      }
-    `
-  }
 </script>

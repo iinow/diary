@@ -7,7 +7,8 @@
     "build": "sapper build --legacy",
     "export": "sapper export --legacy",
     "start": "node __sapper__/build",
-    "validate": "svelte-check --ignore src/node_modules/@sapper"
+    "validate": "svelte-check --ignore src/node_modules/@sapper",
+    "y": "graphql-codegen --config codegen.yml"
   },
   "dependencies": {
     "@apollo/client": "^3.3.4",
@@ -41,6 +42,11 @@
     "@babel/plugin-transform-runtime": "^7.0.0",
     "@babel/preset-env": "^7.0.0",
     "@babel/runtime": "^7.0.0",
+    "@graphql-codegen/cli": "1.19.4",
+    "@graphql-codegen/introspection": "1.18.1",
+    "@graphql-codegen/typescript": "^1.19.0",
+    "@graphql-codegen/typescript-graphql-files-modules": "1.18.1",
+    "@graphql-codegen/typescript-operations": "^1.17.12",
     "@rollup/plugin-alias": "^3.1.1",
     "@rollup/plugin-babel": "^5.0.0",
     "@rollup/plugin-commonjs": "^14.0.0",
@@ -68,6 +74,8 @@
     "eslint-plugin-prettier": "^3.1.4",
     "eslint-plugin-svelte3": "^2.7.3",
     "eslint-svelte3-preprocess": "0.0.4",
+    "graphql-codegen-svelte": "0.0.7",
+    "graphql-codegen-svelte-apollo": "^0.1.2",
     "prettier": "^2.2.1",
     "prettier-plugin-svelte": "^1.4.1",
     "rollup": "^2.3.4",

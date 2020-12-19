@@ -1,0 +1,5 @@
+query GetDiary($id: Float) {
+  diary(id: $id) {
+    updatedAt
+  }
+}
