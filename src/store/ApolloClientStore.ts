@@ -6,6 +6,8 @@ import { WebSocketLink } from 'apollo-link-ws'
 import { split } from 'apollo-link'
 import { HttpLink } from 'apollo-link-http'
 import { getMainDefinition } from '@apollo/client/utilities'
+import { from, of } from 'rxjs'
+import { map } from 'rxjs/internal/operators'
 
 const createApolloClient = () => {
   let client: ApolloClient<any> | undefined
@@ -56,4 +58,4 @@ const createApolloClient = () => {
 
 export const client = createApolloClient()
 
-export default client
+export default () => client.get()

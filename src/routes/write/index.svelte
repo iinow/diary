@@ -4,48 +4,53 @@
   on:change="{(e) => (html = e.detail)}"
   actions="{[]}"
 />
+<div>
+  {lastUpdateDate ? moment(lastUpdateDate).format('YYYY.MM.DD HH:mm:ss 저장 완료') : ''}
+</div>
 
 <script lang="ts">
-  import { gql } from 'apollo-boost'
   import Editor from 'cl-editor/src/Editor.svelte'
-  import { interval } from 'rxjs'
-  import { flatMap, switchMap } from 'rxjs/internal/operators'
+  import { from, interval } from 'rxjs'
   import { filter, map, tap } from 'rxjs/operators'
   import { onMount } from 'svelte'
-  import { v4 as uuidV4 } from 'uuid'
-  import { client } from '@/store/ApolloClientStore'
+  import moment from 'moment'
   import { yyyyMMdd } from '@/common/util'
-  import { GetDiary } from '@/generated/graphql'
+  import { GetDiaryByDate, InsertAndUpdateDiary } from '@/generated/graphql'
 
   let editor: Editor
   let html: string = ''
   let preHtml: string = ''
-  const uuid = uuidV4()
-  let diary
+  let diaryId
+  let lastUpdateDate: Date
 
   onMount(() => {
-    GetDiary({ variables: { id: 3 } }).subscribe((dd) => {
-      diary = dd.data
-      console.log(diary)
+    GetDiaryByDate({ variables: { yyyyMMdd: yyyyMMdd() } }).subscribe((res) => {
+      if (res.data?.diary === undefined) {
+        return
+      }
+      if (res.data?.diary !== null) {
+        diaryId = res.data?.diary.id
+        preHtml = res.data?.diary.content
+        html = res.data?.diary.content
+        lastUpdateDate = moment(res.data?.diary.updatedAt).toDate()
+        editor.setHtml(html)
+      }
+      interval(1000)
+        .pipe(
+          map(() => res.data?.diary),
+          filter(() => html !== preHtml),
+          tap(() => (preHtml = html))
+        )
+        .subscribe(() => writeDiary(html))
     })
-    // getDiaryByToday(yyyyMMdd())
-    //   .pipe(
-    //     tap((data) => {
-    //       diary = data.data.diary
-    //       preHtml = diary.content
-    //       html = diary.content
-    //     }),
-    //     switchMap(() =>
-    //       interval(1000).pipe(
-    //         filter(() => html !== preHtml),
-    //         tap(() => (preHtml = html)),
-    //         map(() => client.get()),
-    //         flatMap((apollo) =>
-    //           apollo.mutate({ mutation: publishMessageQuery(uuid, html) })
-    //         )
-    //       )
-    //     )
-    //   )
-    //   .subscribe(console.log)
   })
+
+  function writeDiary(content: string) {
+    from(
+      InsertAndUpdateDiary({ variables: { id: diaryId, content } })
+    ).subscribe((data) => {
+      diaryId = data.data.insertAndUpdateDiary.id
+      lastUpdateDate = moment(data.data.insertAndUpdateDiary.updatedAt).toDate()
+    })
+  }
 </script>

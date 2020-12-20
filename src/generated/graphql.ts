@@ -1,8 +1,9 @@
-import Client from '@/store/ApolloClientStore'
+import client from '@/store/ApolloClientStore'
 import type {
   ApolloQueryResult,
   ObservableQuery,
   QueryOptions,
+  MutationOptions,
 } from '@apollo/client'
 import { readable } from 'svelte/store'
 import type { Readable } from 'svelte/store'
@@ -100,7 +101,6 @@ export type InsertAndUpdateDiaryOut = {
 export type DiaryInput = {
   id?: Maybe<Scalars['Float']>
   content: Scalars['String']
-  yyyyMMdd: Scalars['String']
 }
 
 export type Subscription = {
@@ -130,9 +130,52 @@ export type GetDiaryQuery = { __typename?: 'Query' } & {
   diary?: Maybe<{ __typename?: 'Diary' } & Pick<Diary, 'updatedAt'>>
 }
 
+export type GetDiaryByDateQueryVariables = Exact<{
+  yyyyMMdd?: Maybe<Scalars['String']>
+}>
+
+export type GetDiaryByDateQuery = { __typename?: 'Query' } & {
+  diary?: Maybe<
+    { __typename?: 'Diary' } & Pick<
+      Diary,
+      'id' | 'content' | 'updatedAt' | 'createdAt'
+    >
+  >
+}
+
+export type InsertAndUpdateDiaryMutationVariables = Exact<{
+  id?: Maybe<Scalars['Float']>
+  content: Scalars['String']
+}>
+
+export type InsertAndUpdateDiaryMutation = { __typename?: 'Mutation' } & {
+  insertAndUpdateDiary: { __typename?: 'InsertAndUpdateDiaryOut' } & Pick<
+    InsertAndUpdateDiaryOut,
+    'id' | 'updatedAt'
+  >
+}
+
 export const GetDiaryDoc = gql`
   query GetDiary($id: Float) {
     diary(id: $id) {
+      updatedAt
+    }
+  }
+`
+export const GetDiaryByDateDoc = gql`
+  query GetDiaryByDate($yyyyMMdd: String) {
+    diary(yyyyMMdd: $yyyyMMdd) {
+      id
+      content
+      updatedAt
+      createdAt
+    }
+  }
+`
+export const InsertAndUpdateDiaryDoc = gql`
+  mutation InsertAndUpdateDiary($id: Float, $content: String!) {
+    insertAndUpdateDiary(diary: { id: $id, content: $content }) {
+      id
       updatedAt
     }
   }
@@ -144,7 +187,7 @@ export const GetDiary = (
     query: ObservableQuery<GetDiaryQuery, GetDiaryQueryVariables>
   }
 > => {
-  const q = Client.get().watchQuery({
+  const q = client().watchQuery({
     query: GetDiaryDoc,
     ...options,
   })
@@ -161,4 +204,46 @@ export const GetDiary = (
     }
   )
   return result
+}
+
+export const GetDiaryByDate = (
+  options: Omit<QueryOptions<GetDiaryByDateQueryVariables>, 'query'>
+): Readable<
+  ApolloQueryResult<GetDiaryByDateQuery> & {
+    query: ObservableQuery<GetDiaryByDateQuery, GetDiaryByDateQueryVariables>
+  }
+> => {
+  const q = client().watchQuery({
+    query: GetDiaryByDateDoc,
+    ...options,
+  })
+  var result = readable<
+    ApolloQueryResult<GetDiaryByDateQuery> & {
+      query: ObservableQuery<GetDiaryByDateQuery, GetDiaryByDateQueryVariables>
+    }
+  >(
+    { data: null, loading: true, error: null, networkStatus: 1, query: null },
+    (set) => {
+      q.subscribe((v) => {
+        set({ ...v, query: q })
+      })
+    }
+  )
+  return result
+}
+
+export const InsertAndUpdateDiary = (
+  options: Omit<
+    MutationOptions<any, InsertAndUpdateDiaryMutationVariables>,
+    'mutation'
+  >
+) => {
+  const m = client().mutate<
+    InsertAndUpdateDiaryMutation,
+    InsertAndUpdateDiaryMutationVariables
+  >({
+    mutation: InsertAndUpdateDiaryDoc,
+    ...options,
+  })
+  return m
 }

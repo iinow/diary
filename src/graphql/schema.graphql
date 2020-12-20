@@ -3,3 +3,19 @@ query GetDiary($id: Float) {
     updatedAt
   }
 }
+
+query GetDiaryByDate($yyyyMMdd: String) {
+  diary(yyyyMMdd: $yyyyMMdd) {
+    id
+    content
+    updatedAt
+    createdAt
+  }
+}
+
+mutation InsertAndUpdateDiary($id: Float, $content: String!) {
+  insertAndUpdateDiary(diary: { id: $id, content: $content }) {
+    id
+    updatedAt
+  }
+}
