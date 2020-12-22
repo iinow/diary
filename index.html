@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+  <head> </head>
+  <body>
+    <!-- <video controls="" autoplay name="media">
+      <source
+        src="http://rlzzws5o6.toastcdn.net/contents/dialogue/audio/W1_T04_C2_01.ogg"
+        type="audio/ogg"
+      />
+    </video> -->
+    <!-- IE 에서는 다운로드가 되게끔 하고 
+      URL 을 그냥 던져버리고 
+      그외에는 따로 별도 브라우저로 새창 열기로 한다. 
+
+      Chrome 에서는 미리보기가 가능하게끔 되어야한다.  
+      Chrome 에서는 자동 재생이 되지 않게끔 해야한다. 
+    -->
+    <audio id="player" controls autoplay muted>
+      <source
+        src="http://d2cstorage-a.akamaihd.net/wbr/gotnext/8578.mp3"
+        type="audio/mp3"
+      />
+    </audio>
+    <script>
+      window.addEventListener('load', function () {
+        var player1 = document.getElementById('player')
+        player1.play()
+      })
+    </script>
+  </body>
+</html>

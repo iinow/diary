@@ -1,13 +1,13 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { writable } from 'svelte/store'
 import { ApolloCache, ApolloClient, ApolloLink } from '@apollo/client'
+import { onError } from '@apollo/client/link/error'
 import { InMemoryCache } from 'apollo-cache-inmemory'
 import { WebSocketLink } from 'apollo-link-ws'
 import { split } from 'apollo-link'
 import { HttpLink } from 'apollo-link-http'
+import { goto } from '@sapper/app'
 import { getMainDefinition } from '@apollo/client/utilities'
-import { from, of } from 'rxjs'
-import { map } from 'rxjs/internal/operators'
 
 const createApolloClient = () => {
   let client: ApolloClient<any> | undefined
@@ -33,7 +33,7 @@ const createApolloClient = () => {
       headers: {},
     })
 
-    const link: ApolloLink = (split(
+    const baseLink: ApolloLink = (split(
       ({ query }) => {
         // @ts-ignore
         const { kind, operation } = getMainDefinition(query)
@@ -42,6 +42,22 @@ const createApolloClient = () => {
       wsLink,
       httpLink
     ) as unknown) as ApolloLink
+
+    const errorLink = onError(({ graphQLErrors, forward, operation }) => {
+      if (graphQLErrors.length !== 0) {
+        const { code } = graphQLErrors[0].extensions
+        switch (code) {
+          case '4010':
+            goto('/login')
+            return
+          default:
+            return
+        }
+      }
+      forward(operation)
+    })
+
+    const link = ApolloLink.from([errorLink, baseLink])
 
     client = new ApolloClient({
       cache: (new InMemoryCache() as unknown) as ApolloCache<any>,

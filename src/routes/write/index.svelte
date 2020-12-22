@@ -10,40 +10,69 @@
 
 <script lang="ts">
   import Editor from 'cl-editor/src/Editor.svelte'
-  import { from, interval } from 'rxjs'
-  import { filter, map, tap } from 'rxjs/operators'
+  import { from, fromEvent } from 'rxjs'
+  import { debounceTime, filter, tap } from 'rxjs/operators'
   import { onMount } from 'svelte'
   import moment from 'moment'
   import { yyyyMMdd } from '@/common/util'
   import { GetDiaryByDate, InsertAndUpdateDiary } from '@/generated/graphql'
+  import type { GetDiaryByDateQuery } from '@/generated/graphql'
+  import { NetworkStatus } from '@apollo/client'
 
-  let editor: Editor
+  let editor: Editor & { refs: any }
   let html: string = ''
   let preHtml: string = ''
-  let diaryId
+  let diaryId: number
   let lastUpdateDate: Date
-
+  let obj = {
+    graphQLErrors: [
+      {
+        message: '로그인을 해주세요.',
+        locations: [{ line: 2, column: 3 }],
+        path: ['diary'],
+        extensions: { code: '4010' },
+      },
+    ],
+    networkError: null,
+    message: '로그인을 해주세요.',
+  }
   onMount(() => {
     GetDiaryByDate({ variables: { yyyyMMdd: yyyyMMdd() } }).subscribe((res) => {
+      if (res.networkStatus === NetworkStatus.error) {
+        console.log('에러 발생')
+        console.log(JSON.stringify(res.error))
+      }
       if (res.data?.diary === undefined) {
         return
       }
       if (res.data?.diary !== null) {
-        diaryId = res.data?.diary.id
-        preHtml = res.data?.diary.content
-        html = res.data?.diary.content
-        lastUpdateDate = moment(res.data?.diary.updatedAt).toDate()
-        editor.setHtml(html)
+        initVariables(res.data)
       }
-      interval(1000)
-        .pipe(
-          map(() => res.data?.diary),
-          filter(() => html !== preHtml),
-          tap(() => (preHtml = html))
-        )
-        .subscribe(() => writeDiary(html))
+      executeEditorTextWatcher()
     })
   })
+
+  function executeEditorTextWatcher() {
+    fromEvent(editor.refs.editor as any, 'input')
+      .pipe(
+        debounceTime(2000),
+        tap(
+          (e: Event & { target: { innerHTML: string } }) =>
+            (html = e.target.innerHTML)
+        ),
+        filter(() => html !== preHtml),
+        tap(() => (preHtml = html))
+      )
+      .subscribe(() => writeDiary(html))
+  }
+
+  function initVariables(res: GetDiaryByDateQuery) {
+    diaryId = res.diary.id
+    preHtml = res.diary.content
+    html = res.diary.content
+    lastUpdateDate = moment(res.diary.updatedAt).toDate()
+    editor.setHtml(html)
+  }
 
   function writeDiary(content: string) {
     from(

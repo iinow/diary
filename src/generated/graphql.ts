@@ -1,4 +1,5 @@
 import client from '@/store/ApolloClientStore'
+import { ApolloError, NetworkStatus } from '@apollo/client'
 import type {
   ApolloQueryResult,
   ObservableQuery,
@@ -198,9 +199,17 @@ export const GetDiary = (
   >(
     { data: null, loading: true, error: null, networkStatus: 1, query: null },
     (set) => {
-      q.subscribe((v) => {
-        set({ ...v, query: q })
-      })
+      q.result()
+        .then((v) => set({ ...v, query: q }))
+        .catch((e: ApolloError) =>
+          set({
+            error: e,
+            query: q,
+            data: null,
+            loading: false,
+            networkStatus: NetworkStatus.error,
+          })
+        )
     }
   )
   return result
@@ -224,9 +233,17 @@ export const GetDiaryByDate = (
   >(
     { data: null, loading: true, error: null, networkStatus: 1, query: null },
     (set) => {
-      q.subscribe((v) => {
-        set({ ...v, query: q })
-      })
+      q.result()
+        .then((v) => set({ ...v, query: q }))
+        .catch((e: ApolloError) =>
+          set({
+            error: e,
+            query: q,
+            data: null,
+            loading: false,
+            networkStatus: NetworkStatus.error,
+          })
+        )
     }
   )
   return result
