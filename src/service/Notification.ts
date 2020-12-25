@@ -1,7 +1,8 @@
 import Noti from 'svelma/src/components/Notification'
 
-export const showNotification = (event: MouseEvent, content: string) => {
+export const showNotification = (content: string) => {
   Noti.create({
     message: content,
+    type: 'is-danger',
   })
 }

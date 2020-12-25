@@ -1,9 +1,9 @@
 // declare global {
-declare namespace NodeJS {
-  export interface Process {
-    browser: boolean
-  }
-}
+// declare namespace NodeJS {
+//   export interface Process {
+//     browser: boolean
+//   }
+// }
 
 declare module 'svelma' {
   import { SvelteComponent } from 'svelte'
@@ -39,4 +39,44 @@ declare module 'svelma' {
     type: 'text'
     placeholder?: string
   }
+}
+
+declare module 'svelma/src/components/Notification' {
+  type NotificationProps = {
+    message: string
+    type?:
+      | ''
+      | 'is-white'
+      | 'is-black'
+      | 'is-light'
+      | 'is-dark'
+      | 'is-primary'
+      | 'is-info'
+      | 'is-success'
+      | 'is-warning'
+      | 'is-danger'
+    active?: boolean
+    showClose?: boolean
+    autoClose?: boolean
+    duration?: number
+    icon?: string | boolean
+    iconPack?: string
+    ariaCloseLabel?: string
+    position?:
+      | ''
+      | 'is-top'
+      | 'is-bottom'
+      | 'is-top-left'
+      | 'is-top-right'
+      | 'is-bottom-left'
+      | 'is-bottom-right'
+  }
+
+  export interface NotificationInterface {
+    // eslint-disable-next-line no-unused-vars
+    create(props: string | NotificationProps): void
+  }
+
+  const Notification: NotificationInterface
+  export default Notification
 }

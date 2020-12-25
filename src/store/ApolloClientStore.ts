@@ -8,6 +8,7 @@ import { split } from 'apollo-link'
 import { HttpLink } from 'apollo-link-http'
 import { goto } from '@sapper/app'
 import { getMainDefinition } from '@apollo/client/utilities'
+import { showNotification } from '@/service/Notification'
 
 const createApolloClient = () => {
   let client: ApolloClient<any> | undefined
@@ -49,6 +50,7 @@ const createApolloClient = () => {
         switch (code) {
           case '4010':
             goto('/login')
+            showNotification('로그인해주세요.')
             return
           default:
             return
