@@ -54,8 +54,13 @@ export type Message = {
 export type Diary = {
   __typename?: 'Diary'
   id: Scalars['Int']
+  /** 일기 제목 */
+  title: Scalars['String']
+  /** 일기 내용 */
   content: Scalars['String']
+  /** 업데이트 날짜 */
   updatedAt: Scalars['DateTime']
+  /** 등록 날짜 */
   createdAt: Scalars['DateTime']
 }
 
@@ -101,6 +106,7 @@ export type InsertAndUpdateDiaryOut = {
 
 export type DiaryInput = {
   id?: Maybe<Scalars['Float']>
+  title: Scalars['String']
   content: Scalars['String']
 }
 
@@ -139,13 +145,14 @@ export type GetDiaryByDateQuery = { __typename?: 'Query' } & {
   diary?: Maybe<
     { __typename?: 'Diary' } & Pick<
       Diary,
-      'id' | 'content' | 'updatedAt' | 'createdAt'
+      'id' | 'title' | 'content' | 'updatedAt' | 'createdAt'
     >
   >
 }
 
 export type InsertAndUpdateDiaryMutationVariables = Exact<{
   id?: Maybe<Scalars['Float']>
+  title: Scalars['String']
   content: Scalars['String']
 }>
 
@@ -167,6 +174,7 @@ export const GetDiaryByDateDoc = gql`
   query GetDiaryByDate($yyyyMMdd: String) {
     diary(yyyyMMdd: $yyyyMMdd) {
       id
+      title
       content
       updatedAt
       createdAt
@@ -174,8 +182,12 @@ export const GetDiaryByDateDoc = gql`
   }
 `
 export const InsertAndUpdateDiaryDoc = gql`
-  mutation InsertAndUpdateDiary($id: Float, $content: String!) {
-    insertAndUpdateDiary(diary: { id: $id, content: $content }) {
+  mutation InsertAndUpdateDiary(
+    $id: Float
+    $title: String!
+    $content: String!
+  ) {
+    insertAndUpdateDiary(diary: { id: $id, title: $title, content: $content }) {
       id
       updatedAt
     }
