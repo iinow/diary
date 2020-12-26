@@ -37,7 +37,7 @@ export type Query = {
 }
 
 export type QueryDiaryArgs = {
-  yyyyMMdd?: Maybe<Scalars['String']>
+  yyyyMMddHHmm?: Maybe<Scalars['String']>
   id?: Maybe<Scalars['Float']>
 }
 
@@ -138,7 +138,7 @@ export type GetDiaryQuery = { __typename?: 'Query' } & {
 }
 
 export type GetDiaryByDateQueryVariables = Exact<{
-  yyyyMMdd?: Maybe<Scalars['String']>
+  yyyyMMddHHmm?: Maybe<Scalars['String']>
 }>
 
 export type GetDiaryByDateQuery = { __typename?: 'Query' } & {
@@ -171,8 +171,8 @@ export const GetDiaryDoc = gql`
   }
 `
 export const GetDiaryByDateDoc = gql`
-  query GetDiaryByDate($yyyyMMdd: String) {
-    diary(yyyyMMdd: $yyyyMMdd) {
+  query GetDiaryByDate($yyyyMMddHHmm: String) {
+    diary(yyyyMMddHHmm: $yyyyMMddHHmm) {
       id
       title
       content

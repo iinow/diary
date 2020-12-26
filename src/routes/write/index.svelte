@@ -7,7 +7,7 @@
   import { onMount } from 'svelte'
   import moment from 'moment'
   import { flatMap, tap } from 'rxjs/internal/operators'
-  import { yyyyMMdd } from '@/common/util'
+  import { yyyyMMdd, yyyyMMddHHmm } from '@/common/util'
   import { GetDiaryByDate, InsertAndUpdateDiary } from '@/generated/graphql'
   import type { GetDiaryByDateQuery } from '@/generated/graphql'
   import { NetworkStatus } from '@apollo/client'
@@ -21,19 +21,22 @@
   let diaryId: number
 
   onMount(() => {
-    GetDiaryByDate({ variables: { yyyyMMdd: yyyyMMdd() } }).subscribe((res) => {
-      if (res.networkStatus === NetworkStatus.error) {
-        console.log('에러 발생')
+    GetDiaryByDate({ variables: { yyyyMMddHHmm: yyyyMMddHHmm() } }).subscribe(
+      (res) => {
+        if (res.networkStatus === NetworkStatus.error) {
+          console.log('에러 발생')
+        }
+        if (res.data?.diary === undefined) {
+          return
+        }
+        if (res.data?.diary !== null) {
+          initVariables(res.data)
+        }
+        executeTitleTextWatcher()
+        executeEditorTextWatcher()
       }
-      if (res.data?.diary === undefined) {
-        return
-      }
-      if (res.data?.diary !== null) {
-        initVariables(res.data)
-      }
-      executeTitleTextWatcher()
-      executeEditorTextWatcher()
-    })
+    )
+    console.log(yyyyMMddHHmm())
   })
 
   function executeTitleTextWatcher() {

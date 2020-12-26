@@ -4,8 +4,8 @@ query GetDiary($id: Float) {
   }
 }
 
-query GetDiaryByDate($yyyyMMdd: String) {
-  diary(yyyyMMdd: $yyyyMMdd) {
+query GetDiaryByDate($yyyyMMddHHmm: String) {
+  diary(yyyyMMddHHmm: $yyyyMMddHHmm) {
     id
     title
     content

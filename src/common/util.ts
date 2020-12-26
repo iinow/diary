@@ -11,3 +11,7 @@ export function isNight(): boolean {
 export function yyyyMMdd(): string {
   return moment(new Date()).format('YYYYMMDD')
 }
+
+export function yyyyMMddHHmm(): string {
+  return moment(yyyyMMdd(), 'YYYYMMDD').utc().format('YYYYMMDDHHmm')
+}

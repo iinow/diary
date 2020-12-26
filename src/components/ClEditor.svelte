@@ -66,7 +66,7 @@
 <svelte:options accessors="{true}" />
 <div class="cl" bind:this="{$references.editorWrapper}">
   {#if visibleActionBtns}
-    <div class="cl-actionbar" in:fade out:fade>
+    <div class="cl-actionbar" in:fade>
       {#each $state.actionBtns as action}
         <button
           type="button"
