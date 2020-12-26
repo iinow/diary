@@ -1,9 +1,3 @@
-<style>
-  .cl {
-    box-shadow: none;
-  }
-</style>
-
 <Editor
   html="{html}"
   bind:this="{editor}"

@@ -21,7 +21,7 @@
 
   .cl-actionbar {
     /* background-color: #ecf0f1; */
-    border-bottom: 1px solid rgba(10, 10, 10, 0.1);
+    /* border-bottom: 1px solid rgba(10, 10, 10, 0.1); */
     width: 100%;
   }
 
@@ -59,22 +59,28 @@
   }
 </style>
 
-<svelte:window on:click="{(event) => _documentClick(event)}" />
+<svelte:window
+  on:click="{(event) => _documentClick(event)}"
+  on:keydown="{(e) => keyDownStore.press(e.key)}"
+/>
 <svelte:options accessors="{true}" />
 <div class="cl" bind:this="{$references.editorWrapper}">
-  <div class="cl-actionbar">
-    {#each $state.actionBtns as action}
-      <button
-        type="button"
-        class="cl-button {action.active ? 'active' : ''}"
-        title="{action.title}"
-        on:click="{(event) => _btnClicked(action)}"
-        disabled="{action.disabled}"
-      >
-        {@html action.icon}
-      </button>
-    {/each}
-  </div>
+  {#if visibleActionBtns}
+    <div class="cl-actionbar" in:fade out:fade>
+      {#each $state.actionBtns as action}
+        <button
+          type="button"
+          class="cl-button {action.active ? 'active' : ''}"
+          title="{action.title}"
+          on:click="{(event) => _btnClicked(action)}"
+          disabled="{action.disabled}"
+        >
+          {@html action.icon}
+        </button>
+      {/each}
+    </div>
+  {/if}
+  <hr class="mt-3 mb-2" />
   <div
     bind:this="{$references.editor}"
     class="cl-content"
@@ -125,6 +131,9 @@
   import { createStateStore } from 'cl-editor/src/helpers/store.js'
   import { writable } from 'svelte/store'
 
+  import { fade } from 'svelte/transition'
+  import { keyDownStore } from '@/store/KeyDoubleDownStore'
+
   let dispatcher = new createEventDispatcher()
 
   export let actions = []
@@ -164,11 +173,20 @@
     removeFormatTags,
   }
 
+  let visibleActionBtns = true
+
   setContext(contextKey, context)
 
   onMount(() => {
     $state.actionBtns = getActionBtns($state.actionObj)
     setHtml(html)
+
+    keyDownStore.subscribe((key) => {
+      if (key.length === 0 || key !== 'Shift') {
+        return
+      }
+      visibleActionBtns = !visibleActionBtns
+    })
   })
 
   function _btnClicked(action) {
