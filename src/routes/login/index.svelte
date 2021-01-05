@@ -12,7 +12,7 @@
       <div class="card">
         <div class="card-content">
           <div class="content">
-            <Button>GitHub</Button>
+            <Button tag="a" href="/oauth/github">Github</Button>
             <Button tag="a" href="/oauth/kakao">Kakao</Button>
           </div>
         </div>

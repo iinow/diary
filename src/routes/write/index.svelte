@@ -36,7 +36,6 @@
         executeEditorTextWatcher()
       }
     )
-    console.log(yyyyMMddHHmm())
   })
 
   function executeTitleTextWatcher() {
