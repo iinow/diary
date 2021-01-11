@@ -45,7 +45,7 @@ const createApolloClient = () => {
     ) as unknown) as ApolloLink
 
     const errorLink = onError(({ graphQLErrors, forward, operation }) => {
-      if (graphQLErrors.length !== 0) {
+      if (graphQLErrors?.length !== 0) {
         const { code } = graphQLErrors[0].extensions
         switch (code) {
           case '4010':

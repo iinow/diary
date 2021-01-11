@@ -20,3 +20,11 @@ mutation InsertAndUpdateDiary($id: Float, $title: String!, $content: String!) {
     updatedAt
   }
 }
+
+query GetMe {
+  me {
+    name
+    provider
+    createdAt
+  }
+}

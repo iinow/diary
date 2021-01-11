@@ -16,30 +16,10 @@
 </section>
 
 <script lang="ts">
-  // import successkid from 'images/successkid.jpg'
   import Button from 'svelma/src/components/Button.svelte'
-  import { gql } from 'apollo-boost'
-  import { client as ApolloClient } from '../store/ApolloClientStore'
-  import { flatMap } from 'rxjs/internal/operators'
-  import { of } from 'rxjs'
-  import { showNotification } from '@/service/Notification'
+  import { meStore } from '@/store'
 
-  let notificationMessage = ''
-  let datas = []
-  let value
-
-  const queryMessages = gql`
-    {
-      messages {
-        text
-        updatedAt
-        createAt
-      }
-    }
-  `
   if (process.browser) {
-    of(ApolloClient.get())
-      .pipe(flatMap((client) => client.query({ query: queryMessages })))
-      .subscribe((value) => (datas = value.data.messages))
+    meStore.call()
   }
 </script>

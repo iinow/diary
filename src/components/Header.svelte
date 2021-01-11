@@ -1,5 +1,5 @@
 <nav
-  class="navbar is-danger has-shadow"
+  class="navbar is-primary has-shadow"
   role="navigation"
   aria-label="main navigation"
 >

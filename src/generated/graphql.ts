@@ -31,9 +31,13 @@ export type Scalars = {
 export type Query = {
   __typename?: 'Query'
   messages: Array<Message>
-  diaries?: Maybe<Array<Diary>>
+  diaries?: Maybe<PaginatedDiaryResponse>
   diary?: Maybe<Diary>
   me: UserMeOut
+}
+
+export type QueryDiariesArgs = {
+  page: PaginationInput
 }
 
 export type QueryDiaryArgs = {
@@ -50,6 +54,15 @@ export type Message = {
   createAt: Scalars['DateTime']
 }
 
+export type PaginatedDiaryResponse = {
+  __typename?: 'PaginatedDiaryResponse'
+  items: Array<Diary>
+  total: Scalars['Int']
+  page: Scalars['Int']
+  pageItemCount: Scalars['Int']
+  hasMore: Scalars['Boolean']
+}
+
 /** 일기 */
 export type Diary = {
   __typename?: 'Diary'
@@ -62,6 +75,13 @@ export type Diary = {
   updatedAt: Scalars['DateTime']
   /** 등록 날짜 */
   createdAt: Scalars['DateTime']
+}
+
+export type PaginationInput = {
+  /** page >= 1 */
+  page: Scalars['Int']
+  /** 페이지 당 아이템 개수 */
+  pageItemCount: Scalars['Int']
 }
 
 export type UserMeOut = {
@@ -79,6 +99,7 @@ export type UserMeOut = {
 /** OAuth Provider */
 export enum Provider {
   Kakao = 'KAKAO',
+  Github = 'GITHUB',
 }
 
 export type Mutation = {
@@ -163,6 +184,15 @@ export type InsertAndUpdateDiaryMutation = { __typename?: 'Mutation' } & {
   >
 }
 
+export type GetMeQueryVariables = Exact<{ [key: string]: never }>
+
+export type GetMeQuery = { __typename?: 'Query' } & {
+  me: { __typename?: 'UserMeOut' } & Pick<
+    UserMeOut,
+    'name' | 'provider' | 'createdAt'
+  >
+}
+
 export const GetDiaryDoc = gql`
   query GetDiary($id: Float) {
     diary(id: $id) {
@@ -190,6 +220,15 @@ export const InsertAndUpdateDiaryDoc = gql`
     insertAndUpdateDiary(diary: { id: $id, title: $title, content: $content }) {
       id
       updatedAt
+    }
+  }
+`
+export const GetMeDoc = gql`
+  query GetMe {
+    me {
+      name
+      provider
+      createdAt
     }
   }
 `
@@ -275,4 +314,37 @@ export const InsertAndUpdateDiary = (
     ...options,
   })
   return m
+}
+export const GetMe = (
+  options: Omit<QueryOptions<GetMeQueryVariables>, 'query'>
+): Readable<
+  ApolloQueryResult<GetMeQuery> & {
+    query: ObservableQuery<GetMeQuery, GetMeQueryVariables>
+  }
+> => {
+  const q = client().watchQuery({
+    query: GetMeDoc,
+    ...options,
+  })
+  var result = readable<
+    ApolloQueryResult<GetMeQuery> & {
+      query: ObservableQuery<GetMeQuery, GetMeQueryVariables>
+    }
+  >(
+    { data: null, loading: true, error: null, networkStatus: 1, query: null },
+    (set) => {
+      q.result()
+        .then((v) => set({ ...v, query: q }))
+        .catch((e: ApolloError) =>
+          set({
+            error: e,
+            query: q,
+            data: null,
+            loading: false,
+            networkStatus: NetworkStatus.error,
+          })
+        )
+    }
+  )
+  return result
 }
