@@ -20,6 +20,16 @@ const mode = process.env.NODE_ENV
 const dev = mode === 'development'
 const legacy = !!process.env.SAPPER_LEGACY_BUILD
 
+const serverConfig = !dev
+  ? {
+      APP_WS_URL: 'ws://localhost:7711/sub',
+      SERVER_URL: 'http://localhost:7711',
+    }
+  : {
+      APP_WS_URL: 'ws://iinow.synology.me:7711/sub',
+      SERVER_URL: 'http://iinow.synology.me:7711',
+    }
+
 const pluginAlias = () =>
   alias({
     entries: [{ find: '@', replacement: path.resolve(__dirname, 'src') }],
@@ -44,7 +54,7 @@ export default {
         'process.browser': true,
         'process.env.NODE_ENV': JSON.stringify(mode),
         APP_HTTP_URL: '/graphql',
-        APP_WS_URL: 'ws://localhost:7711/sub',
+        APP_WS_URL: serverConfig.APP_WS_URL,
       }),
       svelte({
         dev,
@@ -106,6 +116,7 @@ export default {
       replace({
         'process.browser': false,
         'process.env.NODE_ENV': JSON.stringify(mode),
+        SERVER_URL: serverConfig.SERVER_URL,
       }),
       svelte({
         generate: 'ssr',
