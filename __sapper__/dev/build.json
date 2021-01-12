@@ -1,0 +1,73 @@
+{
+  "bundler": "rollup",
+  "shimport": "2.0.4",
+  "assets": {
+    "main": "client.a6b1653e.js"
+  },
+  "css": {
+    "main": [
+      "client-7e5cfcf1.css"
+    ]
+  },
+  "dependencies": {
+    "index.svelte": [
+      "index.b34ef989.js",
+      "index.7eb5c434.js",
+      "ApolloClientStore.3582e0c8.js",
+      "Button.0ca990e2.js",
+      "graphql.4ff1009f.js",
+      "inject_styles.5607aec6.js",
+      "ApolloClientStore-cae9c9c9.css",
+      "index-769b21d0.css"
+    ],
+    "login/_layout.svelte": [
+      "_layout.7aaf1642.js",
+      "inject_styles.5607aec6.js"
+    ],
+    "login/index.svelte": [
+      "index.32941898.js",
+      "index.7eb5c434.js",
+      "Button.0ca990e2.js",
+      "async.e8aaa12b.js",
+      "interval.ca3f1e3c.js",
+      "inject_styles.5607aec6.js"
+    ],
+    "write/_layout.svelte": [
+      "_layout.23f410d0.js",
+      "inject_styles.5607aec6.js",
+      "_layout-accc51ff.css"
+    ],
+    "write/index.svelte": [
+      "index.5d134a56.js",
+      "index.7eb5c434.js",
+      "ApolloClientStore.3582e0c8.js",
+      "graphql.4ff1009f.js",
+      "async.e8aaa12b.js",
+      "tap.b91a43c7.js",
+      "inject_styles.5607aec6.js",
+      "ApolloClientStore-cae9c9c9.css",
+      "index-7c9dd74f.css"
+    ],
+    "blog/index.svelte": [
+      "index.3de82eff.js",
+      "inject_styles.5607aec6.js",
+      "index-eb729130.css"
+    ],
+    "blog/[slug].svelte": [
+      "[slug].6581868f.js",
+      "inject_styles.5607aec6.js",
+      "[slug]-2a7233ee.css"
+    ],
+    "chat/index.svelte": [
+      "index.5be9b2d8.js",
+      "index.7eb5c434.js",
+      "ApolloClientStore.3582e0c8.js",
+      "async.e8aaa12b.js",
+      "tap.b91a43c7.js",
+      "interval.ca3f1e3c.js",
+      "inject_styles.5607aec6.js",
+      "ApolloClientStore-cae9c9c9.css",
+      "index-c4d680ae.css"
+    ]
+  }
+}
