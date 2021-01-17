@@ -1,0 +1,5 @@
+{
+  "WS_URL": "ws://iinow.synology.me:7711/sub",
+  "HTTP_URL": "http://iinow.synology.me:7711",
+  "HTTP_GRAPHQL_SUFFIX": "/graphql"
+}

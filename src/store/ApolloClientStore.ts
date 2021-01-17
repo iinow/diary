@@ -19,7 +19,7 @@ const createApolloClient = () => {
     }
 
     const wsLink = new WebSocketLink({
-      uri: 'APP_WS_URL',
+      uri: process.env.WS_URL,
       options: {
         reconnect: true,
         lazy: true,
@@ -30,7 +30,7 @@ const createApolloClient = () => {
     })
 
     const httpLink = new HttpLink({
-      uri: 'APP_HTTP_URL',
+      uri: process.env.HTTP_GRAPHQL_SUFFIX,
       headers: {},
     })
 

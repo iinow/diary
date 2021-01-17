@@ -1,9 +1,12 @@
-// declare global {
-// declare namespace NodeJS {
-//   export interface Process {
-//     browser: boolean
-//   }
-// }
+declare namespace NodeJS {
+  interface ProcessEnv {
+    NODE_ENV: string
+    PORT: number
+    WS_URL: string
+    HTTP_URL: string
+    HTTP_GRAPHQL_SUFFIX: string
+  }
+}
 
 declare module 'svelma' {
   import { SvelteComponent } from 'svelte'

@@ -11,14 +11,14 @@ polka() // You can also use Express
   .use(
     '/oauth',
     createProxyMiddleware({
-      target: 'SERVER_URL',
+      target: process.env.HTTP_URL,
       changeOrigin: true,
     })
   )
   .use(
     '/graphql',
     createProxyMiddleware({
-      target: 'SERVER_URL',
+      target: process.env.HTTP_URL,
       changeOrigin: true,
     })
   )

@@ -12,6 +12,7 @@ import config from 'sapper/config/rollup.js'
 import postcss from 'rollup-plugin-postcss'
 import svg from 'rollup-plugin-svg-import'
 // import svelteSVG from "rollup-plugin-svelte-svg";
+import injectProcessEnv from 'rollup-plugin-inject-process-env'
 import json from '@rollup/plugin-json'
 import alias from '@rollup/plugin-alias'
 import pkg from './package.json'
@@ -19,16 +20,8 @@ import pkg from './package.json'
 const mode = process.env.NODE_ENV
 const dev = mode === 'development'
 const legacy = !!process.env.SAPPER_LEGACY_BUILD
-
-const serverConfig = !dev
-  ? {
-      APP_WS_URL: 'ws://localhost:7711/sub',
-      SERVER_URL: 'http://localhost:7711',
-    }
-  : {
-      APP_WS_URL: 'ws://iinow.synology.me:7711/sub',
-      SERVER_URL: 'http://iinow.synology.me:7711',
-    }
+// eslint-disable-next-line import/no-dynamic-require
+const env = require(path.resolve('./env', `./${process.env.PROFILE}.json`))
 
 const pluginAlias = () =>
   alias({
@@ -53,8 +46,6 @@ export default {
       replace({
         'process.browser': true,
         'process.env.NODE_ENV': JSON.stringify(mode),
-        APP_HTTP_URL: '/graphql',
-        APP_WS_URL: serverConfig.APP_WS_URL,
       }),
       svelte({
         dev,
@@ -103,6 +94,9 @@ export default {
         terser({
           module: true,
         }),
+      injectProcessEnv(env, {
+        exclude: '**/*.css',
+      }),
     ],
 
     preserveEntrySignatures: false,
@@ -116,7 +110,6 @@ export default {
       replace({
         'process.browser': false,
         'process.env.NODE_ENV': JSON.stringify(mode),
-        SERVER_URL: serverConfig.SERVER_URL,
       }),
       svelte({
         generate: 'ssr',
@@ -136,6 +129,9 @@ export default {
       commonjs(),
       typescript({ sourceMap: dev }),
       pluginAlias(),
+      injectProcessEnv(env, {
+        exclude: '**/*.css',
+      }),
     ],
     external: Object.keys(pkg.dependencies).concat(
       require('module').builtinModules

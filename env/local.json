@@ -1,0 +1,5 @@
+{
+  "WS_URL": "ws://localhost:7711/sub",
+  "HTTP_URL": "http://localhost:7711",
+  "HTTP_GRAPHQL_SUFFIX": "/graphql"
+}
