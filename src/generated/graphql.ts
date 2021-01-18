@@ -90,6 +90,8 @@ export type UserMeOut = {
   uuid: Scalars['String']
   /** 이름 */
   name: Scalars['String']
+  /** 프로필 이미지 경로 */
+  profileImageUrl: Scalars['String']
   /** Social login provider */
   provider: Provider
   /** 생성 날짜 */
@@ -189,7 +191,7 @@ export type GetMeQueryVariables = Exact<{ [key: string]: never }>
 export type GetMeQuery = { __typename?: 'Query' } & {
   me: { __typename?: 'UserMeOut' } & Pick<
     UserMeOut,
-    'name' | 'provider' | 'createdAt'
+    'name' | 'provider' | 'profileImageUrl' | 'createdAt'
   >
 }
 
@@ -228,6 +230,7 @@ export const GetMeDoc = gql`
     me {
       name
       provider
+      profileImageUrl
       createdAt
     }
   }

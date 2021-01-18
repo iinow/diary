@@ -25,6 +25,7 @@ query GetMe {
   me {
     name
     provider
+    profileImageUrl
     createdAt
   }
 }
