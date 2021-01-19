@@ -4,6 +4,21 @@ query GetDiary($id: Float) {
   }
 }
 
+query GetDiaries($page: Int!, $cntPageItem: Int!) {
+  diaries(page: { page: $page, cntPageItem: $cntPageItem }) {
+    items {
+      id
+      title
+      content
+      createdAt
+    }
+    total
+    page
+    cntPageItem
+    hasMore
+  }
+}
+
 query GetDiaryByDate($yyyyMMddHHmm: String) {
   diary(yyyyMMddHHmm: $yyyyMMddHHmm) {
     id

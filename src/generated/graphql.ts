@@ -59,7 +59,7 @@ export type PaginatedDiaryResponse = {
   items: Array<Diary>
   total: Scalars['Int']
   page: Scalars['Int']
-  pageItemCount: Scalars['Int']
+  cntPageItem: Scalars['Int']
   hasMore: Scalars['Boolean']
 }
 
@@ -81,7 +81,7 @@ export type PaginationInput = {
   /** page >= 1 */
   page: Scalars['Int']
   /** 페이지 당 아이템 개수 */
-  pageItemCount: Scalars['Int']
+  cntPageItem: Scalars['Int']
 }
 
 export type UserMeOut = {
@@ -160,6 +160,27 @@ export type GetDiaryQuery = { __typename?: 'Query' } & {
   diary?: Maybe<{ __typename?: 'Diary' } & Pick<Diary, 'updatedAt'>>
 }
 
+export type GetDiariesQueryVariables = Exact<{
+  page: Scalars['Int']
+  cntPageItem: Scalars['Int']
+}>
+
+export type GetDiariesQuery = { __typename?: 'Query' } & {
+  diaries?: Maybe<
+    { __typename?: 'PaginatedDiaryResponse' } & Pick<
+      PaginatedDiaryResponse,
+      'total' | 'page' | 'cntPageItem' | 'hasMore'
+    > & {
+        items: Array<
+          { __typename?: 'Diary' } & Pick<
+            Diary,
+            'id' | 'title' | 'content' | 'createdAt'
+          >
+        >
+      }
+  >
+}
+
 export type GetDiaryByDateQueryVariables = Exact<{
   yyyyMMddHHmm?: Maybe<Scalars['String']>
 }>
@@ -199,6 +220,22 @@ export const GetDiaryDoc = gql`
   query GetDiary($id: Float) {
     diary(id: $id) {
       updatedAt
+    }
+  }
+`
+export const GetDiariesDoc = gql`
+  query GetDiaries($page: Int!, $cntPageItem: Int!) {
+    diaries(page: { page: $page, cntPageItem: $cntPageItem }) {
+      items {
+        id
+        title
+        content
+        createdAt
+      }
+      total
+      page
+      cntPageItem
+      hasMore
     }
   }
 `
@@ -249,6 +286,40 @@ export const GetDiary = (
   var result = readable<
     ApolloQueryResult<GetDiaryQuery> & {
       query: ObservableQuery<GetDiaryQuery, GetDiaryQueryVariables>
+    }
+  >(
+    { data: null, loading: true, error: null, networkStatus: 1, query: null },
+    (set) => {
+      q.result()
+        .then((v) => set({ ...v, query: q }))
+        .catch((e: ApolloError) =>
+          set({
+            error: e,
+            query: q,
+            data: null,
+            loading: false,
+            networkStatus: NetworkStatus.error,
+          })
+        )
+    }
+  )
+  return result
+}
+
+export const GetDiaries = (
+  options: Omit<QueryOptions<GetDiariesQueryVariables>, 'query'>
+): Readable<
+  ApolloQueryResult<GetDiariesQuery> & {
+    query: ObservableQuery<GetDiariesQuery, GetDiariesQueryVariables>
+  }
+> => {
+  const q = client().watchQuery({
+    query: GetDiariesDoc,
+    ...options,
+  })
+  var result = readable<
+    ApolloQueryResult<GetDiariesQuery> & {
+      query: ObservableQuery<GetDiariesQuery, GetDiariesQueryVariables>
     }
   >(
     { data: null, loading: true, error: null, networkStatus: 1, query: null },

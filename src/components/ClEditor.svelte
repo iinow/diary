@@ -173,7 +173,7 @@
     removeFormatTags,
   }
 
-  let visibleActionBtns = true
+  let visibleActionBtns = false
 
   setContext(contextKey, context)
 
