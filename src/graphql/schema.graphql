@@ -1,11 +1,11 @@
-query GetDiary($id: Float) {
-  diary(id: $id) {
+query GetDiary($id: Int!) {
+  diaryById(id: $id) {
     updatedAt
   }
 }
 
-query GetDiaries($page: Int!, $cntPageItem: Int!) {
-  diaries(page: { page: $page, cntPageItem: $cntPageItem }) {
+query GetDiaries($page: Int!, $cntPageItem: Int!, $journalId: Int!) {
+  diaries(page: { page: $page, cntPageItem: $cntPageItem }, journalId: $journalId) {
     items {
       id
       title
@@ -19,8 +19,8 @@ query GetDiaries($page: Int!, $cntPageItem: Int!) {
   }
 }
 
-query GetDiaryByDate($yyyyMMddHHmm: String) {
-  diary(yyyyMMddHHmm: $yyyyMMddHHmm) {
+query GetDiaryByDate($yyyyMMddHHmm: String, $journalId: Int!) {
+  diary(yyyyMMddHHmm: $yyyyMMddHHmm, journalId: $journalId) {
     id
     title
     content
@@ -29,8 +29,8 @@ query GetDiaryByDate($yyyyMMddHHmm: String) {
   }
 }
 
-mutation InsertAndUpdateDiary($id: Float, $title: String!, $content: String!) {
-  insertAndUpdateDiary(diary: { id: $id, title: $title, content: $content }) {
+mutation InsertAndUpdateDiary($id: Int, $journalId: Int!, $title: String!, $content: String!) {
+  insertAndUpdateDiary(diary: { id: $id, journalId: $journalId, title: $title, content: $content }) {
     id
     updatedAt
   }
@@ -41,6 +41,14 @@ query GetMe {
     name
     provider
     profileImageUrl
+    createdAt
+  }
+}
+
+query GetJournals {
+  journals {
+    id
+    name
     createdAt
   }
 }

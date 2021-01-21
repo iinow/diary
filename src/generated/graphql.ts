@@ -32,17 +32,27 @@ export type Query = {
   __typename?: 'Query'
   messages: Array<Message>
   diaries?: Maybe<PaginatedDiaryResponse>
+  /** 오늘 일기 가져오기 */
   diary?: Maybe<Diary>
+  /** 일기 아이디로 검색 */
+  diaryById?: Maybe<Diary>
   me: UserMeOut
+  /** journal 리스트 */
+  journals: Array<Journal>
 }
 
 export type QueryDiariesArgs = {
+  journalId: Scalars['Int']
   page: PaginationInput
 }
 
 export type QueryDiaryArgs = {
+  journalId: Scalars['Int']
   yyyyMMddHHmm?: Maybe<Scalars['String']>
-  id?: Maybe<Scalars['Float']>
+}
+
+export type QueryDiaryByIdArgs = {
+  id?: Maybe<Scalars['Int']>
 }
 
 /** 메시지 타입 정의 */
@@ -104,6 +114,18 @@ export enum Provider {
   Github = 'GITHUB',
 }
 
+/** 일기 그룹 */
+export type Journal = {
+  __typename?: 'Journal'
+  id: Scalars['Int']
+  /** 저널 이름 */
+  name?: Maybe<Scalars['String']>
+  /** 업데이트 날짜 */
+  updatedAt: Scalars['DateTime']
+  /** 등록 날짜 */
+  createdAt: Scalars['DateTime']
+}
+
 export type Mutation = {
   __typename?: 'Mutation'
   publishMessage: Scalars['Float']
@@ -128,7 +150,8 @@ export type InsertAndUpdateDiaryOut = {
 }
 
 export type DiaryInput = {
-  id?: Maybe<Scalars['Float']>
+  id?: Maybe<Scalars['Int']>
+  journalId: Scalars['Int']
   title: Scalars['String']
   content: Scalars['String']
 }
@@ -153,16 +176,17 @@ export type MessageOut = {
 }
 
 export type GetDiaryQueryVariables = Exact<{
-  id?: Maybe<Scalars['Float']>
+  id: Scalars['Int']
 }>
 
 export type GetDiaryQuery = { __typename?: 'Query' } & {
-  diary?: Maybe<{ __typename?: 'Diary' } & Pick<Diary, 'updatedAt'>>
+  diaryById?: Maybe<{ __typename?: 'Diary' } & Pick<Diary, 'updatedAt'>>
 }
 
 export type GetDiariesQueryVariables = Exact<{
   page: Scalars['Int']
   cntPageItem: Scalars['Int']
+  journalId: Scalars['Int']
 }>
 
 export type GetDiariesQuery = { __typename?: 'Query' } & {
@@ -183,6 +207,7 @@ export type GetDiariesQuery = { __typename?: 'Query' } & {
 
 export type GetDiaryByDateQueryVariables = Exact<{
   yyyyMMddHHmm?: Maybe<Scalars['String']>
+  journalId: Scalars['Int']
 }>
 
 export type GetDiaryByDateQuery = { __typename?: 'Query' } & {
@@ -195,7 +220,8 @@ export type GetDiaryByDateQuery = { __typename?: 'Query' } & {
 }
 
 export type InsertAndUpdateDiaryMutationVariables = Exact<{
-  id?: Maybe<Scalars['Float']>
+  id?: Maybe<Scalars['Int']>
+  journalId: Scalars['Int']
   title: Scalars['String']
   content: Scalars['String']
 }>
@@ -216,16 +242,27 @@ export type GetMeQuery = { __typename?: 'Query' } & {
   >
 }
 
+export type GetJournalsQueryVariables = Exact<{ [key: string]: never }>
+
+export type GetJournalsQuery = { __typename?: 'Query' } & {
+  journals: Array<
+    { __typename?: 'Journal' } & Pick<Journal, 'id' | 'name' | 'createdAt'>
+  >
+}
+
 export const GetDiaryDoc = gql`
-  query GetDiary($id: Float) {
-    diary(id: $id) {
+  query GetDiary($id: Int!) {
+    diaryById(id: $id) {
       updatedAt
     }
   }
 `
 export const GetDiariesDoc = gql`
-  query GetDiaries($page: Int!, $cntPageItem: Int!) {
-    diaries(page: { page: $page, cntPageItem: $cntPageItem }) {
+  query GetDiaries($page: Int!, $cntPageItem: Int!, $journalId: Int!) {
+    diaries(
+      page: { page: $page, cntPageItem: $cntPageItem }
+      journalId: $journalId
+    ) {
       items {
         id
         title
@@ -240,8 +277,8 @@ export const GetDiariesDoc = gql`
   }
 `
 export const GetDiaryByDateDoc = gql`
-  query GetDiaryByDate($yyyyMMddHHmm: String) {
-    diary(yyyyMMddHHmm: $yyyyMMddHHmm) {
+  query GetDiaryByDate($yyyyMMddHHmm: String, $journalId: Int!) {
+    diary(yyyyMMddHHmm: $yyyyMMddHHmm, journalId: $journalId) {
       id
       title
       content
@@ -252,11 +289,19 @@ export const GetDiaryByDateDoc = gql`
 `
 export const InsertAndUpdateDiaryDoc = gql`
   mutation InsertAndUpdateDiary(
-    $id: Float
+    $id: Int
+    $journalId: Int!
     $title: String!
     $content: String!
   ) {
-    insertAndUpdateDiary(diary: { id: $id, title: $title, content: $content }) {
+    insertAndUpdateDiary(
+      diary: {
+        id: $id
+        journalId: $journalId
+        title: $title
+        content: $content
+      }
+    ) {
       id
       updatedAt
     }
@@ -268,6 +313,15 @@ export const GetMeDoc = gql`
       name
       provider
       profileImageUrl
+      createdAt
+    }
+  }
+`
+export const GetJournalsDoc = gql`
+  query GetJournals {
+    journals {
+      id
+      name
       createdAt
     }
   }
@@ -403,6 +457,40 @@ export const GetMe = (
   var result = readable<
     ApolloQueryResult<GetMeQuery> & {
       query: ObservableQuery<GetMeQuery, GetMeQueryVariables>
+    }
+  >(
+    { data: null, loading: true, error: null, networkStatus: 1, query: null },
+    (set) => {
+      q.result()
+        .then((v) => set({ ...v, query: q }))
+        .catch((e: ApolloError) =>
+          set({
+            error: e,
+            query: q,
+            data: null,
+            loading: false,
+            networkStatus: NetworkStatus.error,
+          })
+        )
+    }
+  )
+  return result
+}
+
+export const GetJournals = (
+  options: Omit<QueryOptions<GetJournalsQueryVariables>, 'query'>
+): Readable<
+  ApolloQueryResult<GetJournalsQuery> & {
+    query: ObservableQuery<GetJournalsQuery, GetJournalsQueryVariables>
+  }
+> => {
+  const q = client().watchQuery({
+    query: GetJournalsDoc,
+    ...options,
+  })
+  var result = readable<
+    ApolloQueryResult<GetJournalsQuery> & {
+      query: ObservableQuery<GetJournalsQuery, GetJournalsQueryVariables>
     }
   >(
     { data: null, loading: true, error: null, networkStatus: 1, query: null },
