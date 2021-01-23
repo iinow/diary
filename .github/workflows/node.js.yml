@@ -25,13 +25,19 @@ jobs:
       uses: actions/setup-node@v1
       with:
         node-version: ${{ matrix.node-version }}
-    - name: variable test 
-      run: |
-        echo ${TOKEN}
-      env: 
-        TOKEN: ${{ secrets.ADMIN_TOKEN }}
-    - run: echo ${{ secrets.ADMIN_TOKEN }}
     - run: npm ci
     - run: npm run build:dev --if-present
 #    - run: npm test
-    - run: sh deploy.sh
+    - run: echo 1. generate diary.tar.gz
+    - run: |
+        rm -rf diary.tar.gz
+        tar -zcvf diary.tar.gz __sapper__/
+    - run: echo 2. JFrog upload
+    - run: |
+        curl -X PUT 'http://iinow.synology.me:9901/artifactory/diary/diary.tar.gz' \
+          --header 'Authorization: Bearer '${{ secrets.ADMIN_TOKEN }} \
+          --header 'Content-Type: application/gzip' \
+          --data-binary '@diary.tar.gz'
+    - run: |
+        curl -w " - status code: %{http_code}" -X POST 'http://iinow.synology.me:9999/job/diary-web/build' \
+          --header 'Authorization: Basic '${{ secrets.JENKINS_SEGEG_TOKEN }}
