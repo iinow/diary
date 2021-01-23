@@ -25,6 +25,12 @@ jobs:
       uses: actions/setup-node@v1
       with:
         node-version: ${{ matrix.node-version }}
+    - name: variable test 
+      run: |
+        echo ${TOKEN}
+      env: 
+        TOKEN: ${{ secrets.ADMIN_TOKEN }}
+    - run: echo ${{ secrets.ADMIN_TOKEN }}
     - run: npm ci
     - run: npm run build:dev --if-present
 #    - run: npm test
