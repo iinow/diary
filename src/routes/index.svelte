@@ -8,7 +8,7 @@
 <section class="section">
   <div class="container">
     <h2 class="title">오늘 일기</h2>
-    <Button tag="a" href="/write">일기 바로가기</Button>
+    <Button tag="a" href="/journals">일기 바로가기</Button>
   </div>
   <div class="container">
     <h2 class="title">이번 달</h2>

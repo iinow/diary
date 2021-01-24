@@ -1,9 +1,7 @@
 <JournalListFilter />
 
-<div>저널 리스트로 바로가기</div>
-
 <section class="section">
-  <div class="container">
+  <div class="container is-flex is-justify-content-center is-flex-wrap-wrap">
     {#each responseJournal.journals as journal}
       <JournalItem id={journal.id} name={journal.name} createdAt={journal.createdAt}/>
     {/each}
