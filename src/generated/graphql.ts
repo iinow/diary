@@ -180,7 +180,12 @@ export type GetDiaryQueryVariables = Exact<{
 }>
 
 export type GetDiaryQuery = { __typename?: 'Query' } & {
-  diaryById?: Maybe<{ __typename?: 'Diary' } & Pick<Diary, 'updatedAt'>>
+  diaryById?: Maybe<
+    { __typename?: 'Diary' } & Pick<
+      Diary,
+      'id' | 'title' | 'content' | 'updatedAt' | 'createdAt'
+    >
+  >
 }
 
 export type GetDiariesQueryVariables = Exact<{
@@ -253,7 +258,11 @@ export type GetJournalsQuery = { __typename?: 'Query' } & {
 export const GetDiaryDoc = gql`
   query GetDiary($id: Int!) {
     diaryById(id: $id) {
+      id
+      title
+      content
       updatedAt
+      createdAt
     }
   }
 `

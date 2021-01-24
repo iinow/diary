@@ -1,8 +1,8 @@
 <DiaryEditor journalId={journalId} diaryId={diaryId}/>
 
 <script context="module" lang="ts">
-  export function preload({ params: { journalId } }: PreloadObj) {
-    return { journalId }
+  export function preload({ params: { journalId, diaryId } }: PreloadObj) {
+    return { journalId, diaryId }
   }
 </script>
 
@@ -10,8 +10,7 @@
 import type { PreloadObj } from '@/model/type'
 import DiaryEditor from '@/components/DiaryEditor.svelte'
 
-let diaryId: number = undefined
-
+export let diaryId: number
 export let journalId: number
 </script>
   

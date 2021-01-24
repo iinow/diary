@@ -1,6 +1,10 @@
 query GetDiary($id: Int!) {
   diaryById(id: $id) {
+    id
+    title
+    content
     updatedAt
+    createdAt
   }
 }
 
